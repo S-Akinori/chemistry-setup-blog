@@ -1,0 +1,17 @@
+---
+import type { PortableTextBlock } from "emdash";
+import { PortableText } from "emdash/ui";
+import MathBlock from "./blocks/Math.astro";
+
+interface Props {
+	value?: PortableTextBlock[];
+}
+
+const { value = [] } = Astro.props;
+const customTypes = {
+	"chemistry.math": MathBlock,
+};
+---
+
+<PortableText value={value} components={{ type: customTypes }} />
+

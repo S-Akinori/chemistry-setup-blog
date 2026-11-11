@@ -1,0 +1,95 @@
+---
+import katex from "katex";
+import "katex/contrib/mhchem";
+import "katex/dist/katex.min.css";
+
+interface MathNode {
+	latex?: string;
+	display?: "block" | "inline";
+	caption?: string;
+}
+
+const { node } = Astro.props as { node: MathNode };
+const latex = typeof node.latex === "string" ? node.latex.trim() : "";
+const displayMode = node.display !== "inline";
+let html = "";
+let error = "";
+
+if (latex) {
+	try {
+		html = katex.renderToString(latex, {
+			displayMode,
+			throwOnError: true,
+			strict: "warn",
+			trust: false,
+			output: "htmlAndMathml",
+		});
+	} catch (caught) {
+		error = caught instanceof Error ? caught.message : "数式を表示できませんでした。";
+	}
+}
+---
+
+<figure class:list={["math-block", { "math-block--inline": !displayMode }]}>
+	{
+		html ? (
+			<div class="math-block__formula" set:html={html} />
+		) : (
+			<div class="math-block__error" role="status">
+				<strong>LaTeXを確認してください</strong>
+				{error && <span>{error}</span>}
+				{latex && <code>{latex}</code>}
+			</div>
+		)
+	}
+	{node.caption && <figcaption>{node.caption}</figcaption>}
+</figure>
+
+<style>
+	.math-block {
+		margin-block: 2rem;
+		padding: clamp(1rem, 2vw, 1.5rem);
+		overflow-x: auto;
+		border: 1px solid var(--color-border);
+		border-left: 4px solid var(--color-brand);
+		background: var(--color-surface);
+	}
+
+	.math-block__formula {
+		min-width: max-content;
+		font-size: clamp(1rem, 0.9rem + 0.45vw, 1.3rem);
+	}
+
+	.math-block--inline .math-block__formula {
+		min-width: 0;
+		text-align: left;
+	}
+
+	.math-block :global(.katex-display) {
+		margin: 0;
+	}
+
+	.math-block figcaption {
+		margin-top: 1rem;
+		padding-top: 0.75rem;
+		border-top: 1px solid var(--color-border-subtle);
+		color: var(--color-text-secondary);
+		font-size: var(--font-size-sm);
+		line-height: var(--leading-normal);
+	}
+
+	.math-block__error {
+		display: grid;
+		gap: 0.5rem;
+		color: #9f2d20;
+		font-size: var(--font-size-sm);
+	}
+
+	.math-block__error code {
+		padding: 0.5rem;
+		overflow-wrap: anywhere;
+		background: var(--color-fill);
+		color: var(--color-text);
+	}
+</style>
+

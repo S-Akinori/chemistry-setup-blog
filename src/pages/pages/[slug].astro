@@ -5,8 +5,8 @@ import {
 	decodeSlug,
 	getSiteSettings,
 } from "emdash";
-import { PortableText } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
+import ArticleBody from "../../components/ArticleBody.astro";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
 import "../../styles/prose.css";
 
@@ -46,7 +46,7 @@ const seo = getSeoMeta(page, {
 			</header>
 
 			<div class="prose page__body" {...page.edit.content}>
-				<PortableText value={page.data.content} />
+				<ArticleBody value={page.data.content} />
 			</div>
 		</div>
 	</article>
