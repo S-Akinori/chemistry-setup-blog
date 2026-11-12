@@ -379,6 +379,21 @@ const hasHeadings = (post.data.content ?? []).some(
 		margin-inline: auto;
 	}
 
+	.arrow-link {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		width: fit-content;
+		line-height: 1.25;
+	}
+
+	.arrow-link svg {
+		width: 1rem;
+		height: 1rem;
+		flex: 0 0 1rem;
+		transition: translate var(--transition-fast);
+	}
+
 	.back-link {
 		margin-block-end: clamp(2rem, 1.5rem + 2vw, 3rem);
 	}

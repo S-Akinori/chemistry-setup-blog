@@ -1,0 +1,50 @@
+---
+import katex from "katex";
+import "katex/contrib/mhchem";
+import "katex/dist/katex.min.css";
+
+interface Props {
+	node: {
+		markDef?: {
+			latex?: string;
+		};
+	};
+}
+
+const { node } = Astro.props;
+const latex = node?.markDef?.latex ?? "";
+let html = "";
+
+try {
+	html = katex.renderToString(latex, {
+		displayMode: false,
+		throwOnError: true,
+		strict: "warn",
+		trust: false,
+		output: "htmlAndMathml",
+	});
+} catch {
+	// Invalid expressions are normally filtered before this renderer is used.
+}
+---
+
+{
+	html ? (
+		<span class="inline-math" set:html={html} />
+	) : (
+		<span class="inline-math inline-math--fallback">${latex}$</span>
+	)
+}
+
+<style>
+	.inline-math {
+		display: inline-block;
+		max-width: 100%;
+		padding-inline: 0.08em;
+		vertical-align: -0.08em;
+	}
+
+	.inline-math--fallback {
+		font-family: var(--font-mono);
+	}
+</style>

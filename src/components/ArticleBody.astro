@@ -1,17 +1,23 @@
 ---
-import type { PortableTextBlock } from "emdash";
+import { getEditMeta, type PortableTextBlock } from "emdash";
 import { PortableText } from "emdash/ui";
 import MathBlock from "./blocks/Math.astro";
+import InlineMath from "./marks/InlineMath.astro";
+import { transformInlineMath } from "../utils/inline-math";
 
 interface Props {
 	value?: PortableTextBlock[];
 }
 
 const { value = [] } = Astro.props;
+const renderValue = getEditMeta(value) ? value : transformInlineMath(value);
 const customTypes = {
 	"chemistry.math": MathBlock,
 };
+const customMarks = {
+	inlineMath: InlineMath,
+};
 ---
 
-<PortableText value={value} components={{ type: customTypes }} />
+<PortableText value={renderValue} components={{ type: customTypes, mark: customMarks }} />
 
